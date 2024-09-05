@@ -15,7 +15,6 @@ public class Application {
 
 		var userRepository = context.getBean(UserRepository.class);
 		User user = new User();
-		user.setId(1L);
 		user.setUsername("Djon");
 		user.setPassword("password");
 		user.setFirstName("John");
