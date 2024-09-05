@@ -22,7 +22,7 @@ public class Application {
 		user.setLastName("Smith");
 
 		var saved = userRepository.save(user);
-		System.out.println();
+		System.out.println(saved);
 
 	}
 
