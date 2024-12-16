@@ -8,7 +8,7 @@ public class LocalController {
 
     @GetMapping("/")
     public String home() {
-        return "Hello World";
+        return "Hello world";
     }
 
 }
