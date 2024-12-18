@@ -32,6 +32,9 @@ public class Person {
     @Column
     private LocalDateTime createdAt;
 
+    @Column
+    private String status;
+
     public Person() {
     }
 

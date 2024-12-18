@@ -1,14 +1,15 @@
 package com.aub.firstProject.controller;
 
-import com.aub.firstProject.dto.PersonDTO;
-import com.aub.firstProject.models.Person;
+import com.aub.firstProject.dto.PersonDto;
 import com.aub.firstProject.services.PersonService;
 import com.aub.firstProject.util.PersonConverter;
+import com.aub.firstProject.util.PersonValidator;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/person")
@@ -21,10 +22,28 @@ public class PersonController {
         this.personService = personService;
     }
 
+    @InitBinder
+    protected void initBinder(WebDataBinder binder) {
+        binder.setValidator(new PersonValidator(personService));
+    }
+
     @PostMapping("/add")
-    public String newPerson(@RequestBody PersonDTO personDTO) {
-        Person person = PersonConverter.convertPerson(personDTO);
-        personService.save(person);
+    public String newPerson(@RequestBody PersonDto personDTO,
+                            BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return String.valueOf(ResponseEntity.badRequest().body(HttpStatus.BAD_REQUEST));
+        }
+        personService.save(PersonConverter.convertPerson(personDTO));
         return "Id нового пользователя" + personService.findByEmail(personDTO.getEmail()).getId();
+    }
+
+    @GetMapping("/get")
+    public PersonDto getPersonById(@RequestParam("id") Integer id) {
+        return PersonConverter.convertPersonDto(personService.findById(id));
+    }
+
+    @GetMapping("/update_status")
+    public PersonDto updatePerson(@RequestParam("email") String email, @RequestParam("status") String status){
+        return personService.updateStatus(email, status);
     }
 }
