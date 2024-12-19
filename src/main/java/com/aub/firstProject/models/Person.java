@@ -35,6 +35,9 @@ public class Person {
     @Column
     private String status;
 
+    @Column
+    private LocalDateTime updateStatus;
+
     public Person() {
     }
 

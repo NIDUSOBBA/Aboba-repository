@@ -20,6 +20,7 @@ public class PersonConverter {
         personDTO.setFullName(person.getFullName());
         personDTO.setAge(person.getAge());
         personDTO.setEmail(person.getEmail());
+        personDTO.setStatus(person.getStatus());
         return personDTO;
     }
 }

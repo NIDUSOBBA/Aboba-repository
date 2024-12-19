@@ -9,6 +9,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class PersonService {
@@ -38,6 +41,7 @@ public class PersonService {
         var status1 = byEmail.getStatus();
         byEmail.setStatus(status);
         var personDto = PersonConverter.convertPersonDto(byEmail);
+        byEmail.setUpdateStatus(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES));
         personRepository.save(byEmail);
         if(status1 == null){
             personDto.setStatus(status+"The previous status was Null");
@@ -46,6 +50,29 @@ public class PersonService {
             personDto.setStatus(status +"The previous status was " + status1);
             return personDto;
         }
+    }
+
+    public List<PersonDto> findAllForStatus(String status, String from) {
+        List<Person> byStatus;
+        if(status.equals("offline") || status.equals("online")) {
+            byStatus = personRepository.findByStatus(status);
+        }else {
+            byStatus = personRepository.findAll();
+        }
+
+        List<PersonDto> personDtos = new ArrayList<>();
+
+        for (Person person : byStatus) {
+
+            if(from.equals(" ")){
+                if(person.getUpdateStatus().toString().equals(from)){
+                    personDtos.add(PersonConverter.convertPersonDto(person));
+                }
+            }else {
+                personDtos.add(PersonConverter.convertPersonDto(person));
+            }
+        }
+        return personDtos;
     }
 
 }

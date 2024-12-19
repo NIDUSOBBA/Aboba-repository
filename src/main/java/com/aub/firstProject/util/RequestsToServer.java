@@ -18,6 +18,7 @@ public class RequestsToServer {
     private static final String addingPerson = "http://localhost:8080/person/add";
     private static final String getPerson = "http://localhost:8080/person/get?id={id}";
     private static final String updateStatusPerson = "http://localhost:8080/person/update_status?email={email}&status={status}";
+    private static final String getEveryoneWith = "http://localhost:8080/person/get_everyone_with?status={status}&update_status={update_status}";
 
     public static void saveImage(String url) {
         File imageFile = new File(getImage + url);
@@ -65,6 +66,15 @@ public class RequestsToServer {
         resultOfRequest(response,
                 "Успешное обновление статуса",
                 "Что-то пошло не так при обновлении статуса");
+    }
+
+    public static void getEveryoneWith(Map<String, String> map) {
+        map.putIfAbsent("status", null);
+        map.putIfAbsent("update_status", null);
+        var forEntity = restTemplate.getForEntity(getEveryoneWith, String.class, map);
+        resultOfRequest(forEntity,
+                "Успешно проведенная выборка.",
+                "Что-то пошло не так при проведении выборки.");
     }
 
     public static void resultOfRequest(ResponseEntity<String> response, String trueMessage, String falseMessage) {
