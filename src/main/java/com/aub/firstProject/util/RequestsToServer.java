@@ -7,19 +7,23 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.File;
-import java.util.HashMap;
 import java.util.Map;
 
 public class RequestsToServer {
+    private static final RestTemplate restTemplate = new RestTemplate();
+    private static final HttpHeaders headers = new HttpHeaders();
+
+    private static final String addingImage = "http://localhost:8080/image/upload";
+    private static final String getImage = "C:/Users/aub/Desktop/images/";
+    private static final String addingPerson = "http://localhost:8080/person/add";
+    private static final String getPerson = "http://localhost:8080/person/get?id={id}";
+    private static final String updateStatusPerson = "http://localhost:8080/person/update_status?email={email}&status={status}";
+    private static final String getEveryoneWith = "http://localhost:8080/person/get_everyone_with?status={status}&update_status={update_status}";
 
     public static void saveImage(String url) {
-        RestTemplate restTemplate = new RestTemplate();
-        String serverUrl = "http://localhost:8080/image/upload";
-        String putImage = "C:/Users/aub/Desktop/images/";
-        File imageFile = new File(putImage + url);
+        File imageFile = new File(getImage + url);
 
         FileSystemResource fileResource = new FileSystemResource(imageFile);
-        HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.MULTIPART_FORM_DATA);
 
         MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
@@ -27,29 +31,57 @@ public class RequestsToServer {
 
         HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
 
-        ResponseEntity<String> response = restTemplate.postForEntity(serverUrl, requestEntity, String.class);
-
-        if (response.getStatusCode() == HttpStatus.OK) {
-            System.out.println("Уникальный ID загруженного файла: " + response.getBody());
-        } else {
-            System.err.println("Ошибка загрузки файла. Статус: " + response.getStatusCode());
-        }
+        ResponseEntity<String> response = restTemplate.postForEntity(addingImage, requestEntity, String.class);
+        resultOfRequest(response,
+                "Уникальный ID загруженного файла: " + response.getBody(),
+                "Ошибка загрузки файла. Статус: " + response.getStatusCode()
+        );
     }
 
     public static void savePerson(Map<String, String> map) {
-        RestTemplate template = new RestTemplate();
-
-        HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
-        String serverUrl = "http://localhost:8080/person/add";
 
-        HttpEntity<Map<String, String>> requestSensor = new HttpEntity<>(map);
-        var stringResponseEntity = template.postForEntity(serverUrl, requestSensor, String.class);
-        if (stringResponseEntity.getStatusCode() == HttpStatus.OK) {
-            System.out.println("Пользователь успешно сохранен");
-        }else {
-            System.err.println("Ошибка загрузки Пользователя. Статус: " + stringResponseEntity.getStatusCode());
+        HttpEntity<Map<String, String>> requestSensor = new HttpEntity<>(map, headers);
+
+        var response = restTemplate.postForEntity(addingPerson, requestSensor, String.class);
+
+        resultOfRequest(response,
+                "Пользователь успешно сохранен.",
+                "Ошибка загрузки Пользователя. Статус: " + response.getStatusCode()
+        );
+    }
+
+    public static void getPerson(Map<String, String> map) {
+        var forEntity = restTemplate.getForEntity(getPerson, String.class, map);
+        resultOfRequest(forEntity,
+                "Успешно возвращен пользователь.",
+                "Ошибка при возвращении пользователя."
+        );
+    }
+
+    public static void updatePerson(Map<String, String> map) {
+
+        var response = restTemplate.getForEntity(updateStatusPerson, String.class, map);
+        resultOfRequest(response,
+                "Успешное обновление статуса",
+                "Что-то пошло не так при обновлении статуса");
+    }
+
+    public static void getEveryoneWith(Map<String, String> map) {
+        map.putIfAbsent("status", null);
+        map.putIfAbsent("update_status", null);
+        var forEntity = restTemplate.getForEntity(getEveryoneWith, String.class, map);
+        resultOfRequest(forEntity,
+                "Успешно проведенная выборка.",
+                "Что-то пошло не так при проведении выборки.");
+    }
+
+    public static void resultOfRequest(ResponseEntity<String> response, String trueMessage, String falseMessage) {
+        if (response.getStatusCode() == HttpStatus.OK) {
+            System.out.println(trueMessage);
+        } else {
+            System.err.println(falseMessage);
         }
     }
 }
