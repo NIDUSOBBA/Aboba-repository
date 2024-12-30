@@ -77,4 +77,15 @@ public class PersonService {
         return personDtos;
     }
 
+    public void printAllPersonsDto(List<PersonDto> allForStatus) {
+        for (var person : allForStatus) {
+            System.out.println(person.getImage());
+            System.out.println(person.getFullName());
+            System.out.println(person.getAge());
+            System.out.println(person.getEmail());
+            System.out.println(person.getStatus());
+            System.out.println("_____");
+        }
+    }
+
 }

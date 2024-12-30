@@ -50,14 +50,7 @@ public class PersonController {
     public List<PersonDto> getPersonWithEveryone(@RequestParam(value = "status", required = false) String status,
                                                  @RequestParam(value = "update_status", required = false) String localDateTime) {
         var allForStatus = personService.findAllForStatus(status, localDateTime);
-        for (var person : allForStatus) {
-            System.out.println(person.getImage());
-            System.out.println(person.getFullName());
-            System.out.println(person.getAge());
-            System.out.println(person.getEmail());
-            System.out.println(person.getStatus());
-            System.out.println("_____");
-        }
+        personService.printAllPersonsDto(allForStatus);
         return allForStatus;
     }
 
