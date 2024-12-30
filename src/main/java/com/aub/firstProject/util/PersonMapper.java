@@ -2,10 +2,12 @@ package com.aub.firstProject.util;
 
 import com.aub.firstProject.dto.PersonDto;
 import com.aub.firstProject.models.Person;
+import org.springframework.stereotype.Service;
 
-public class PersonConverter {
+@Service
+public class PersonMapper {
 
-    public static Person convertPerson(PersonDto personDTO) {
+    public Person mapPerson(PersonDto personDTO) {
         Person person = new Person();
         person.setImage(personDTO.getImage());
         person.setFullName(personDTO.getFullName());
@@ -14,7 +16,7 @@ public class PersonConverter {
         return person;
     }
 
-    public static PersonDto convertPersonDto(Person person) {
+    public PersonDto mapPersonDto(Person person) {
         PersonDto personDTO = new PersonDto();
         personDTO.setImage(person.getImage());
         personDTO.setFullName(person.getFullName());

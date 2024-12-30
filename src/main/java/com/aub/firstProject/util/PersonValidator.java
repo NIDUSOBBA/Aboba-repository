@@ -1,11 +1,13 @@
 package com.aub.firstProject.util;
 
 import com.aub.firstProject.dto.PersonDto;
-import com.aub.firstProject.services.PersonService;
+import com.aub.firstProject.service.PersonService;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
+import org.springframework.web.server.ResponseStatusException;
 
 @Component
 public class PersonValidator implements Validator {
@@ -27,10 +29,14 @@ public class PersonValidator implements Validator {
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "email", "field.required", "Name cannot be empty");
 
         if(personDto.getFullName().length() < 2){
-           throw new IllegalArgumentException("Full name must be at least 2 characters");
+            errors.rejectValue("fullName", "field.required", "Name must be at least 2 characters");
         }
         if(personService.findByEmail(personDto.getEmail()) != null){
-            throw new IllegalArgumentException("Email already exists");
+            errors.rejectValue("email", "field.required", "Email is already in use");
+        }
+        if (errors.hasErrors()) {
+            errors.getAllErrors().forEach(error -> System.out.println(error.getDefaultMessage()));
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
 
     }

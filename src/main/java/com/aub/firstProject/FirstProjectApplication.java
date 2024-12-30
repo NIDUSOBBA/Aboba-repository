@@ -1,8 +1,11 @@
 package com.aub.firstProject;
 
 
+import com.aub.firstProject.util.ImageInit;
+import com.aub.firstProject.util.PersonMapper;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -38,10 +41,16 @@ public class FirstProjectApplication {
 //        params.put("status", "offline");
 //        params.put("update_status", "2024-12-19T11:34");
 //        RequestsToServer.getEveryoneWith(params);
+    }
 
+    @Bean
+    public ImageInit imageInit() {
+        return new ImageInit();
+    }
 
-
-
+    @Bean
+    public PersonMapper personMapper() {
+        return new PersonMapper();
     }
 
 }

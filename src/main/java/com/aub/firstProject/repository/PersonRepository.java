@@ -1,4 +1,4 @@
-package com.aub.firstProject.repositories;
+package com.aub.firstProject.repository;
 
 import com.aub.firstProject.models.Person;
 import org.springframework.data.jpa.repository.JpaRepository;
